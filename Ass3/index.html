@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Marks Calculator</title>
+
+    <style>
+        body{
+            font-family: Arial;
+            margin: 0;
+            background: lightgray;
+            text-align: center;
+        }
+
+        header{
+            background: green;
+            color: white;
+            padding: 15px;
+        }
+
+        nav{
+            background: darkgreen;
+            padding: 10px;
+        }
+
+        nav a{
+            color: white;
+            text-decoration: none;
+            margin: 20px;
+            font-size: 18px;
+        }
+
+        nav a:hover{
+            text-decoration: underline;
+        }
+
+        .container{
+            margin-top: 20px;
+        }
+
+        input{
+            width: 220px;
+            padding: 8px;
+            margin: 5px;
+        }
+
+        button{
+            padding: 10px 20px;
+            background: green;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover{
+            background: darkgreen;
+        }
+
+        table{
+            margin: auto;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        table, th, td{
+            border: 1px solid black;
+            padding: 10px;
+        }
+
+        th{
+            background: green;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Student Marks Calculator</h1>
+    </header>
+
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#add-student">Add Student</a>
+    </nav>
+
+    <main class="container">
+    
+        <section id="home">
+            <h2>Welcome to the Student Marks Calculator</h2>
+        </section>
+
+        <section id="add-student">
+                <label>Student Name:</label>
+                <br>
+                <input type="text" id="name">
+                <br>
+
+                <label>DSA Marks:</label>
+                <br>
+                <input type="number" id="dsa">
+                <br>
+
+                <label>DBMS Marks:</label>
+                <br>
+                <input type="number" id="dbms">
+                <br>
+
+                <label>DLCO Marks:</label>
+                <br>
+                <input type="number" id="dlco">
+                <br>
+
+                <label>Java Marks:</label>
+                <br>
+                <input type="number" id="java">
+                <br>
+
+                <label>M3 Marks:</label>
+                <br>
+                <input type="number" id="m3">
+                <br>
+
+                <button onclick="addStudent()">Add Student</button>
+        </section>
+
+        <h3 id="topper">Topper : None</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Total</th>
+                    <th>Percentage</th>
+                </tr>
+            </thead>
+
+            <tbody id="result">
+
+            </tbody>
+        </table>
+
+    </main>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
