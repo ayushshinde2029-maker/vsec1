@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Grocery Billing System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🛒 Grocery Billing System</h1>
+
+    <div class="customer-box">
+        <label>Customer Name</label>
+        <input type="text" id="customerName" placeholder="Enter customer name">
+    </div>
+
+    <div class="product-box">
+
+        <h2>Add Product</h2>
+
+        <input type="text" id="productName" placeholder="Product name">
+
+        <input type="number" id="price" placeholder="Price">
+
+        <input type="number" id="quantity" placeholder="Quantity" min="1">
+
+        <button id="addBtn">Add to Bill</button>
+
+    </div>
+
+    <div class="bill-box">
+
+        <h2>Bill</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Qty</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody id="billItems"></tbody>
+        </table>
+
+        <div class="summary">
+
+            <p>Subtotal: ₹<span id="subtotal">0</span></p>
+
+            <p>Discount: ₹<span id="discount">0</span></p>
+
+            <p>GST: ₹<span id="gst">0</span></p>
+
+            <h2>Total: ₹<span id="grandTotal">0</span></h2>
+
+        </div>
+
+        <button id="clearBtn">Clear Bill</button>
+        <button id="printBtn">Print Bill</button>
+
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
