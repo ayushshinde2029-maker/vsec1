@@ -17,9 +17,9 @@ addBtn.addEventListener("click", function () {
 
     row.innerHTML = `
         <td>${productName}</td>
-        <td>₹${price}</td>
+        <td>${price}</td>
         <td>${quantity}</td>
-        <td>₹${total}</td>
+        <td>${total}</td>
         <td>
             <button onclick="deleteItem(this)">Delete</button>
         </td>
@@ -45,7 +45,7 @@ function calculateBill() {
     let subtotal = 0;
 
     rows.forEach(function(row) {
-        let total = Number(row.children[3].innerText.replace("₹", ""));
+        let total = Number(row.children[3].innerText);
         subtotal += total;
     });
 
