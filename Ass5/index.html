@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Four Squares - Left/Right Pairs</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            margin: 0;
+
+            height: 100vh;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            background-color: #222;
+
+            overflow: hidden;
+        }
+
+
+        /* MAIN CONTAINER */
+
+        .container {
+
+            width: 600px;
+
+            height: 400px;
+
+            position: relative;
+        }
+
+
+        /* ONE TEXT BEHIND THE SQUARES */
+
+        .text {
+
+            position: absolute;
+
+            top: 50%;
+
+            left: 50%;
+
+            transform: translate(-50%, -50%);
+
+            color: white;
+
+            font-size: 40px;
+
+            font-weight: bold;
+
+            z-index: 1;
+
+            transition: opacity 0.5s ease;
+        }
+
+
+        /* HIDE TEXT */
+
+        .hidden {
+
+            opacity: 0;
+        }
+
+
+        /* COMMON SQUARE */
+
+        .square {
+
+            width: 140px;
+
+            height: 140px;
+
+            position: absolute;
+
+            z-index: 2;
+
+            transition: transform 2s ease-in-out;
+        }
+
+
+        /*
+        ============================
+        CLOSED POSITION
+
+        All four squares sit
+        together as a 2x2 block,
+        covering the text.
+        ============================
+        */
+
+
+        /* TOP LEFT */
+
+        .top-left {
+
+            top: 60px;
+
+            left: 160px;
+
+            background-color: tomato;
+        }
+
+
+        /* TOP RIGHT */
+
+        .top-right {
+
+            top: 60px;
+
+            left: 300px;
+
+            background-color: royalblue;
+        }
+
+
+        /* BOTTOM LEFT */
+
+        .bottom-left {
+
+            top: 200px;
+
+            left: 160px;
+
+            background-color: seagreen;
+        }
+
+
+        /* BOTTOM RIGHT */
+
+        .bottom-right {
+
+            top: 200px;
+
+            left: 300px;
+
+            background-color: purple;
+        }
+
+
+
+        /*
+        ============================
+        OPEN POSITION
+
+        Left pair (top-left +
+        bottom-left) slides left,
+        staying stacked.
+
+        Right pair (top-right +
+        bottom-right) slides right,
+        staying stacked.
+        ============================
+        */
+
+
+        .open.top-left {
+
+            transform:
+                translate(-140px, -40px)
+                rotate(90deg);
+        }
+
+
+        .open.bottom-left {
+
+            transform:
+                translate(-140px, -40px)
+                rotate(90deg);
+        }
+
+
+        .open.top-right {
+
+            transform:
+                translate(140px, -40px)
+                rotate(-90deg);
+        }
+
+
+        .open.bottom-right {
+
+            transform:
+                translate(140px, -40px)
+                rotate(-90deg);
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <div class="container">
+
+
+        <!--
+        ONE TEXT ONLY
+
+        The text is behind the squares.
+        -->
+
+        <div
+            class="text hidden"
+            id="text"
+        >
+            HELLO
+        </div>
+
+
+        <!-- FOUR SQUARES -->
+
+        <div class="square top-left"></div>
+
+        <div class="square top-right"></div>
+
+        <div class="square bottom-left"></div>
+
+        <div class="square bottom-right"></div>
+
+
+    </div>
+
+
+
+    <script>
+
+
+        /*
+        Get all squares
+        */
+
+        let squares =
+            document.querySelectorAll(".square");
+
+
+        /*
+        Get the text
+        */
+
+        let text =
+            document.getElementById("text");
+
+
+        /*
+        ============================
+        OPEN SQUARES
+        ============================
+        */
+
+        function openSquares() {
+
+
+            squares.forEach(function(square) {
+
+                square.classList.add("open");
+
+            });
+
+
+            /*
+            Squares split into
+            left / right pairs.
+
+            Show the text.
+            */
+
+            text.classList.remove("hidden");
+
+        }
+
+
+
+        /*
+        ============================
+        CLOSE SQUARES
+        ============================
+        */
+
+        function closeSquares() {
+
+
+            squares.forEach(function(square) {
+
+                square.classList.remove("open");
+
+            });
+
+
+            /*
+            Squares come back
+            together as a block.
+
+            Hide the text.
+            */
+
+            text.classList.add("hidden");
+
+        }
+
+
+
+        /*
+        ============================
+        START
+        ============================
+        */
+
+        closeSquares();
+
+
+        /*
+        Wait 2 seconds,
+        then open.
+        */
+
+        setTimeout(function() {
+
+            openSquares();
+
+        }, 2000);
+
+
+
+        /*
+        ============================
+        REPEAT FOREVER
+        ============================
+        */
+
+        setInterval(function() {
+
+
+            /*
+            Open to left / right
+            */
+
+            openSquares();
+
+
+            /*
+            Wait 3 seconds
+            */
+
+            setTimeout(function() {
+
+
+                /*
+                Close back to block
+                */
+
+                closeSquares();
+
+
+            }, 3000);
+
+
+        }, 5000);
+
+
+    </script>
+
+</body>
+
+</html>
