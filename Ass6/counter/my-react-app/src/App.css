@@ -1,0 +1,22 @@
+.counter {
+  text-align: center;
+  margin-top: 150px;
+}
+
+h1 {
+  color: #333;
+}
+
+h2 {
+  color: blue;
+  font-size: 35px;
+}
+
+button {
+  padding: 8px 18px;
+  margin: 5px;
+  background: blue;
+  color: white;
+  border: none;
+  border-radius: 4px;
+}
