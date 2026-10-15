@@ -5,9 +5,9 @@ const app = express();
 app.use(express.json());
 
 let students = [
-    { id:1, name:"Suhan", marks:90},
-    { id:2, name:"Aayush",marks:96},
-    { id:3, name:"Sarang",marks:95},
+    { id:1, name:"Abhishek", marks:90},
+    { id:2, name:"Veadnt",marks:96},
+    { id:3, name:"Rudra",marks:95},
 ];
 
 app.get("/abc", (req, res) => {
