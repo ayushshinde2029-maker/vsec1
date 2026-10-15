@@ -1,35 +1,32 @@
 
-import { Routes, Route, Link } from "react-router-dom";
-
-import Dashboard from "./pages/Dashboard";
-import AddExpense from "./pages/AddExpense";
-import ExpenseHistory from "./pages/ExpenseHistory";
-import Balances from "./pages/Balances";
+import { Routes, Route, NavLink, Navigate } from "react-router-dom";
 import Members from "./pages/Members";
+import Expenses from "./pages/Expenses";
+import "./App.css";
 
 function App() {
     return (
         <div className="app">
-            <header>
-                <h1>TripSplit</h1>
-                <p>Travel together. Split expenses easily.</p>
+            <header className="header">
+                <div>
+                    <h1>TripSplit</h1>
+                    <p>Manage your trip expenses easily</p>
+                </div>
+                <span className="tag">Travel Expense Manager</span>
             </header>
 
             <nav className="navbar">
-                <Link to="/">Dashboard</Link>
-                <Link to="/add-expense">Add Expense</Link>
-                <Link to="/expenses">Expense History</Link>
-                <Link to="/balances">Balances</Link>
-                <Link to="/members">Members</Link>
+                <NavLink to="/members">Members</NavLink>
+                <NavLink to="/expenses">Expenses</NavLink>
             </nav>
 
             <Routes>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/add-expense" element={<AddExpense />} />
-                <Route path="/expenses" element={<ExpenseHistory />} />
-                <Route path="/balances" element={<Balances />} />
+                <Route path="/" element={<Navigate to="/members" replace />} />
                 <Route path="/members" element={<Members />} />
+                <Route path="/expenses" element={<Expenses />} />
             </Routes>
+
+            <footer>TripSplit | Simple Travel Expense Management</footer>
         </div>
     );
 }

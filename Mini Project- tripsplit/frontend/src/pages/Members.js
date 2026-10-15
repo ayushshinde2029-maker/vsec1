@@ -8,31 +8,28 @@ function Members() {
     const [name, setName] = useState("");
     const [error, setError] = useState("");
 
-    const loadMembers = async () => {
+    async function loadMembers() {
         try {
             const response = await fetch(`${API}/members`);
+            const data = await response.json();
 
             if (!response.ok) {
                 throw new Error();
             }
 
-            setMembers(await response.json());
+            setMembers(data);
             setError("");
         } catch {
             setError("Could not load members.");
         }
-    };
+    }
 
     useEffect(() => {
         loadMembers();
     }, []);
 
-    const addMember = async (e) => {
+    async function addMember(e) {
         e.preventDefault();
-
-        const trimmedName = name.trim();
-
-        if (!trimmedName) return;
 
         try {
             const response = await fetch(`${API}/members`, {
@@ -40,48 +37,65 @@ function Members() {
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ name: trimmedName })
+                body: JSON.stringify({ name })
             });
 
+            const data = await response.json();
+
             if (!response.ok) {
-                throw new Error();
+                throw new Error(data.message);
             }
 
             setName("");
             await loadMembers();
-        } catch {
-            setError("Could not add member.");
+        } catch (error) {
+            setError(error.message || "Could not add member.");
         }
-    };
+    }
 
     return (
-        <section className="card">
-            <h2>Trip Members</h2>
-
-            {error && <p className="red">{error}</p>}
-
-            <form onSubmit={addMember}>
-                <label>Member Name</label>
-                <input
-                    value={name}
-                    onChange={e => setName(e.target.value)}
-                    placeholder="Enter member name"
-                    required
-                />
-
-                <button type="submit" disabled={!name.trim()}>
-                    Add Member
-                </button>
-            </form>
-
-            <h3>All Members</h3>
-
-            {members.map((m, index) => (
-                <div className="balance" key={`${m}-${index}`}>
-                    <strong>{m}</strong>
+        <main>
+            <div className="page-heading">
+                <div>
+                    <h2>Trip Members</h2>
+                    <p>Add people who are travelling with you.</p>
                 </div>
-            ))}
-        </section>
+                <span className="count">{members.length} Members</span>
+            </div>
+
+            {error && <p className="error">{error}</p>}
+
+            <section className="card">
+                <h3>Add New Member</h3>
+
+                <form onSubmit={addMember} className="member-form">
+                    <input
+                        value={name}
+                        onChange={e => setName(e.target.value)}
+                        placeholder="Enter member name"
+                        required
+                    />
+                    <button type="submit">+ Add Member</button>
+                </form>
+            </section>
+
+            <section className="card">
+                <h3>All Members</h3>
+
+                {members.length === 0 && <p>No members added yet.</p>}
+
+                <div className="member-list">
+                    {members.map(member => (
+                        <div className="member-item" key={member._id}>
+                            <div className="avatar">
+                                {member.name.charAt(0).toUpperCase()}
+                            </div>
+                            <span>{member.name}</span>
+                        </div>
+                    ))}
+                </div>
+            </section>
+        </main>
     );
 }
 
