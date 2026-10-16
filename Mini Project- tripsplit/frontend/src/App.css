@@ -460,3 +460,90 @@ footer {
     text-align: left;
   }
 }
+
+
+.expense-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.expense-form input,
+.expense-form select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+.expense-form button,
+.expense-actions button {
+  padding: 9px 14px;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.expense-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.expense-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  border: 1px solid #eee;
+  border-radius: 10px;
+}
+
+.expense-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.expense-details span {
+  color: #777;
+  font-size: 14px;
+}
+
+.expense-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.paid-status {
+  color: green;
+  font-weight: bold;
+}
+
+.pending-status {
+  color: #dc2626;
+  font-weight: bold;
+}
+
+.positive {
+  color: green;
+}
+
+.negative {
+  color: #dc2626;
+}
+
+.settled {
+  color: #777;
+}
+
+@media (max-width: 600px) {
+  .expense-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

@@ -1,14 +1,30 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Members from "./pages/Members";
 import Expenses from "./pages/Expenses";
 import Balances from "./pages/Balances";
 import "./App.css";
 
 function App() {
-  const [members, setMembers] = useState([]);
-  const [expenses, setExpenses] = useState([]);
+  const [members, setMembers] = useState(() => {
+    const saved = localStorage.getItem("tripSplitMembers");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [expenses, setExpenses] = useState(() => {
+    const saved = localStorage.getItem("tripSplitExpenses");
+    return saved ? JSON.parse(saved) : [];
+  });
+
   const [page, setPage] = useState("home");
+
+  useEffect(() => {
+    localStorage.setItem("tripSplitMembers", JSON.stringify(members));
+  }, [members]);
+
+  useEffect(() => {
+    localStorage.setItem("tripSplitExpenses", JSON.stringify(expenses));
+  }, [expenses]);
 
   return (
     <div className="app">

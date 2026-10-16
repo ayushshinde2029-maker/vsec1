@@ -5,135 +5,121 @@ function Expenses({ members, expenses, setExpenses }) {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [paidBy, setPaidBy] = useState("");
-  const [error, setError] = useState("");
-
-  const total = expenses.reduce(
-    (sum, expense) => sum + expense.amount,
-    0
-  );
-
-  const share = members.length > 0 ? total / members.length : 0;
 
   function addExpense(e) {
     e.preventDefault();
 
-    const value = Number(amount);
-
-    if (!title.trim()) {
-      setError("Please enter an expense name.");
+    if (!title || !amount || !paidBy || Number(amount) <= 0) {
+      alert("Please fill all details");
       return;
     }
 
-    if (
-      amount.trim() === "" ||
-      !Number.isFinite(value) ||
-      value <= 0
-    ) {
-      setError("Please enter a valid amount greater than zero.");
-      return;
-    }
+    const expense = {
+      id: Date.now(),
+      title,
+      amount: Number(amount),
+      paidBy
+    };
 
-    if (members.length === 0) {
-      setError("Add members before recording expenses.");
-      return;
-    }
-
-    const payerId = Number(paidBy);
-
-    if (!members.some((member) => member.id === payerId)) {
-      setError("Please select who paid.");
-      return;
-    }
-
-    setExpenses([
-      ...expenses,
-      {
-        id: Date.now() + Math.random(),
-        title: title.trim(),
-        amount: Math.round(value * 100) / 100,
-        paidBy: payerId
-      }
-    ]);
+    setExpenses([...expenses, expense]);
 
     setTitle("");
     setAmount("");
     setPaidBy("");
-    setError("");
+  }
+
+  function deleteExpense(id) {
+    setExpenses(expenses.filter((expense) => expense.id !== id));
   }
 
   return (
     <section className="section">
       <div className="page-heading">
         <div>
-          <h2>Add Trip Expense</h2>
-          <p>Record food, hotels, fuel and other costs.</p>
-        </div>
-      </div>
-
-      <div className="summary">
-        <div className="summary-card">
-          <span>Total Expenses</span>
-          <h3>₹{total.toFixed(2)}</h3>
-        </div>
-
-        <div className="summary-card">
-          <span>Members</span>
-          <h3>{members.length}</h3>
-        </div>
-
-        <div className="summary-card">
-          <span>Share Per Person</span>
-          <h3>₹{share.toFixed(2)}</h3>
+          <h2>Expenses</h2>
+          <p>Add and manage your trip expenses.</p>
         </div>
       </div>
 
       <div className="card">
-        <form className="expense-form" onSubmit={addExpense}>
-          <div className="form-group">
-            <label htmlFor="expense-title">Expense Name</label>
+        <h3 className="card-title">Add Expense</h3>
+
+        {members.length === 0 ? (
+          <p className="hint">Please add members first.</p>
+        ) : (
+          <form onSubmit={addExpense} className="expense-form">
             <input
-              id="expense-title"
               type="text"
-              placeholder="e.g. Hotel, Food, Fuel"
+              placeholder="Expense name"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              maxLength={80}
+              required
             />
-          </div>
 
-          <div className="form-group">
-            <label htmlFor="expense-amount">Amount (₹)</label>
             <input
-              id="expense-amount"
               type="number"
-              min="0.01"
-              step="0.01"
-              placeholder="Enter amount"
+              placeholder="Amount"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
+              min="0.01"
+              step="0.01"
+              required
             />
-          </div>
 
-          <div className="form-group">
-            <label htmlFor="expense-payer">Paid By</label>
             <select
-              id="expense-payer"
               value={paidBy}
               onChange={(e) => setPaidBy(e.target.value)}
+              required
             >
-              <option value="">Select member</option>
+              <option value="">Who paid?</option>
+
               {members.map((member) => (
                 <option key={member.id} value={member.id}>
                   {member.name}
                 </option>
               ))}
             </select>
+
+            <button type="submit">Add Expense</button>
+          </form>
+        )}
+      </div>
+
+      <div className="card">
+        <h3 className="card-title">All Expenses</h3>
+
+        {expenses.length === 0 ? (
+          <p className="hint">No expenses added yet.</p>
+        ) : (
+          <div className="expense-list">
+            {expenses.map((expense) => {
+              const member = members.find(
+                (m) => String(m.id) === String(expense.paidBy)
+              );
+
+              return (
+                <div className="expense-item" key={expense.id}>
+                  <div className="expense-details">
+                    <strong>{expense.title}</strong>
+                    <span>
+                      Paid by {member ? member.name : "Unknown"}
+                    </span>
+                    <strong>₹{expense.amount.toFixed(2)}</strong>
+                  </div>
+
+                  <div className="expense-actions">
+                    <button
+                      type="button"
+                      onClick={() => deleteExpense(expense.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
-
-          <button type="submit">Save Expense</button>
-        </form>
-
-        {error && <p className="error">{error}</p>}
+        )}
       </div>
     </section>
   );
