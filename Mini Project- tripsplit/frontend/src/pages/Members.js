@@ -1,102 +1,118 @@
 
-import { useEffect, useState } from "react";
+import React, { useState } from "react";
 
-const API = "http://localhost:5000";
+function Members({ members, setMembers, expenses }) {
+  const [name, setName] = useState("");
+  const [error, setError] = useState("");
 
-function Members() {
-    const [members, setMembers] = useState([]);
-    const [name, setName] = useState("");
-    const [error, setError] = useState("");
+  function addMember(e) {
+    e.preventDefault();
 
-    async function loadMembers() {
-        try {
-            const response = await fetch(`${API}/members`);
-            const data = await response.json();
+    const cleanName = name.trim();
 
-            if (!response.ok) {
-                throw new Error();
-            }
-
-            setMembers(data);
-            setError("");
-        } catch {
-            setError("Could not load members.");
-        }
+    if (!cleanName) {
+      setError("Please enter a member name.");
+      return;
     }
 
-    useEffect(() => {
-        loadMembers();
-    }, []);
-
-    async function addMember(e) {
-        e.preventDefault();
-
-        try {
-            const response = await fetch(`${API}/members`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ name })
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message);
-            }
-
-            setName("");
-            await loadMembers();
-        } catch (error) {
-            setError(error.message || "Could not add member.");
-        }
+    if (members.length >= 10) {
+      setError("Maximum 10 members allowed.");
+      return;
     }
 
-    return (
-        <main>
-            <div className="page-heading">
-                <div>
-                    <h2>Trip Members</h2>
-                    <p>Add people who are travelling with you.</p>
-                </div>
-                <span className="count">{members.length} Members</span>
-            </div>
+    if (
+      members.some(
+        (member) =>
+          member.name.toLowerCase() === cleanName.toLowerCase()
+      )
+    ) {
+      setError("This member already exists.");
+      return;
+    }
 
-            {error && <p className="error">{error}</p>}
+    setMembers([
+      ...members,
+      {
+        id: Date.now() + Math.random(),
+        name: cleanName
+      }
+    ]);
 
-            <section className="card">
-                <h3>Add New Member</h3>
+    setName("");
+    setError("");
+  }
 
-                <form onSubmit={addMember} className="member-form">
-                    <input
-                        value={name}
-                        onChange={e => setName(e.target.value)}
-                        placeholder="Enter member name"
-                        required
-                    />
-                    <button type="submit">+ Add Member</button>
-                </form>
-            </section>
-
-            <section className="card">
-                <h3>All Members</h3>
-
-                {members.length === 0 && <p>No members added yet.</p>}
-
-                <div className="member-list">
-                    {members.map(member => (
-                        <div className="member-item" key={member._id}>
-                            <div className="avatar">
-                                {member.name.charAt(0).toUpperCase()}
-                            </div>
-                            <span>{member.name}</span>
-                        </div>
-                    ))}
-                </div>
-            </section>
-        </main>
+  function removeMember(id) {
+    const hasExpenses = expenses.some(
+      (expense) => expense.paidBy === id
     );
+
+    if (hasExpenses) {
+      setError(
+        "Delete this member's expenses before removing them."
+      );
+      return;
+    }
+
+    setMembers(members.filter((member) => member.id !== id));
+    setError("");
+  }
+
+  return (
+    <section className="section">
+      <div className="page-heading">
+        <div>
+          <h2>Trip Members</h2>
+          <p>Manage the people joining your trip.</p>
+        </div>
+        <span className="count">{members.length}/10 members</span>
+      </div>
+
+      <div className="card">
+        <form className="member-form" onSubmit={addMember}>
+          <input
+            type="text"
+            placeholder="Enter member name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            maxLength={40}
+          />
+
+          <button type="submit" disabled={members.length >= 10}>
+            + Add Member
+          </button>
+        </form>
+
+        {error && <p className="error">{error}</p>}
+
+        <div className="member-list">
+          {members.length === 0 ? (
+            <p className="hint">No members added yet.</p>
+          ) : (
+            members.map((member) => (
+              <div className="member-item" key={member.id}>
+                <div className="avatar">
+                  {member.name.charAt(0).toUpperCase()}
+                </div>
+
+                <strong className="member-name">
+                  {member.name}
+                </strong>
+
+                <button
+                  type="button"
+                  className="delete-button"
+                  onClick={() => removeMember(member.id)}
+                >
+                  Remove
+                </button>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    </section>
+  );
 }
 
 export default Members;

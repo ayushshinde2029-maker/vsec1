@@ -1,34 +1,71 @@
 
-import { Routes, Route, NavLink, Navigate } from "react-router-dom";
+import React, { useState } from "react";
 import Members from "./pages/Members";
 import Expenses from "./pages/Expenses";
+import Balances from "./pages/Balances";
 import "./App.css";
 
 function App() {
-    return (
-        <div className="app">
-            <header className="header">
-                <div>
-                    <h1>TripSplit</h1>
-                    <p>Manage your trip expenses easily</p>
-                </div>
-                <span className="tag">Travel Expense Manager</span>
-            </header>
+  const [members, setMembers] = useState([]);
+  const [expenses, setExpenses] = useState([]);
+  const [page, setPage] = useState("home");
 
-            <nav className="navbar">
-                <NavLink to="/members">Members</NavLink>
-                <NavLink to="/expenses">Expenses</NavLink>
-            </nav>
+  return (
+    <div className="app">
+      <header className="header">
+        <h1>TripSplit</h1>
+        <p>Split expenses. Travel together.</p>
+      </header>
 
-            <Routes>
-                <Route path="/" element={<Navigate to="/members" replace />} />
-                <Route path="/members" element={<Members />} />
-                <Route path="/expenses" element={<Expenses />} />
-            </Routes>
+      <nav className="navbar">
+        <button
+          className={page === "home" ? "active" : ""}
+          onClick={() => setPage("home")}
+        >
+          Home
+        </button>
 
-            <footer>TripSplit | Simple Travel Expense Management</footer>
-        </div>
-    );
+        <button
+          className={page === "members" ? "active" : ""}
+          onClick={() => setPage("members")}
+        >
+          Members
+        </button>
+
+        <button
+          className={page === "expenses" ? "active" : ""}
+          onClick={() => setPage("expenses")}
+        >
+          Expenses
+        </button>
+      </nav>
+
+      <main>
+        {page === "home" && (
+          <Balances
+            members={members}
+            expenses={expenses}
+          />
+        )}
+
+        {page === "members" && (
+          <Members
+            members={members}
+            setMembers={setMembers}
+            expenses={expenses}
+          />
+        )}
+
+        {page === "expenses" && (
+          <Expenses
+            members={members}
+            expenses={expenses}
+            setExpenses={setExpenses}
+          />
+        )}
+      </main>
+    </div>
+  );
 }
 
 export default App;

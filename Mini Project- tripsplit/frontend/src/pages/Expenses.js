@@ -1,177 +1,142 @@
 
-import { useEffect, useState } from "react";
+import React, { useState } from "react";
 
-const API = "http://localhost:5000";
+function Expenses({ members, expenses, setExpenses }) {
+  const [title, setTitle] = useState("");
+  const [amount, setAmount] = useState("");
+  const [paidBy, setPaidBy] = useState("");
+  const [error, setError] = useState("");
 
-function Expenses() {
-    const [members, setMembers] = useState([]);
-    const [expenses, setExpenses] = useState([]);
-    const [title, setTitle] = useState("");
-    const [amount, setAmount] = useState("");
-    const [paidBy, setPaidBy] = useState("");
-    const [error, setError] = useState("");
+  const total = expenses.reduce(
+    (sum, expense) => sum + expense.amount,
+    0
+  );
 
-    async function loadData() {
-        try {
-            const memberResponse = await fetch(`${API}/members`);
-            const expenseResponse = await fetch(`${API}/expenses`);
+  const share = members.length > 0 ? total / members.length : 0;
 
-            if (!memberResponse.ok || !expenseResponse.ok) {
-                throw new Error();
-            }
+  function addExpense(e) {
+    e.preventDefault();
 
-            const memberData = await memberResponse.json();
-            const expenseData = await expenseResponse.json();
+    const value = Number(amount);
 
-            setMembers(memberData);
-            setExpenses(expenseData);
-
-            if (memberData.length > 0) {
-                setPaidBy(current =>
-                    memberData.some(m => m.name === current)
-                        ? current
-                        : memberData[0].name
-                );
-            } else {
-                setPaidBy("");
-            }
-
-            setError("");
-        } catch {
-            setError("Could not load data. Check the backend.");
-        }
+    if (!title.trim()) {
+      setError("Please enter an expense name.");
+      return;
     }
 
-    useEffect(() => {
-        loadData();
-    }, []);
-
-    async function addExpense(e) {
-        e.preventDefault();
-        setError("");
-
-        try {
-            const response = await fetch(`${API}/expenses`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    title,
-                    amount,
-                    paidBy
-                })
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message);
-            }
-
-            setTitle("");
-            setAmount("");
-            await loadData();
-        } catch (error) {
-            setError(error.message || "Could not add expense.");
-        }
+    if (
+      amount.trim() === "" ||
+      !Number.isFinite(value) ||
+      value <= 0
+    ) {
+      setError("Please enter a valid amount greater than zero.");
+      return;
     }
 
-    const total = expenses.reduce(
-        (sum, expense) => sum + Number(expense.amount),
-        0
-    );
+    if (members.length === 0) {
+      setError("Add members before recording expenses.");
+      return;
+    }
 
-    return (
-        <main>
-            <div className="page-heading">
-                <div>
-                    <h2>Trip Expenses</h2>
-                    <p>Record and track your travel spending.</p>
-                </div>
-            </div>
+    const payerId = Number(paidBy);
 
-            <div className="summary">
-                <div className="summary-card">
-                    <p>Total Expenses</p>
-                    <h2>₹{total.toFixed(2)}</h2>
-                </div>
+    if (!members.some((member) => member.id === payerId)) {
+      setError("Please select who paid.");
+      return;
+    }
 
-                <div className="summary-card">
-                    <p>Number of Expenses</p>
-                    <h2>{expenses.length}</h2>
-                </div>
-            </div>
+    setExpenses([
+      ...expenses,
+      {
+        id: Date.now() + Math.random(),
+        title: title.trim(),
+        amount: Math.round(value * 100) / 100,
+        paidBy: payerId
+      }
+    ]);
 
-            {error && <p className="error">{error}</p>}
+    setTitle("");
+    setAmount("");
+    setPaidBy("");
+    setError("");
+  }
 
-            <section className="card">
-                <h3>Add New Expense</h3>
+  return (
+    <section className="section">
+      <div className="page-heading">
+        <div>
+          <h2>Add Trip Expense</h2>
+          <p>Record food, hotels, fuel and other costs.</p>
+        </div>
+      </div>
 
-                <form onSubmit={addExpense}>
-                    <label>Expense Name</label>
-                    <input
-                        value={title}
-                        onChange={e => setTitle(e.target.value)}
-                        placeholder="Hotel, food, fuel..."
-                        required
-                    />
+      <div className="summary">
+        <div className="summary-card">
+          <span>Total Expenses</span>
+          <h3>₹{total.toFixed(2)}</h3>
+        </div>
 
-                    <label>Amount (₹)</label>
-                    <input
-                        type="number"
-                        min="0.01"
-                        step="0.01"
-                        value={amount}
-                        onChange={e => setAmount(e.target.value)}
-                        placeholder="Enter amount"
-                        required
-                    />
+        <div className="summary-card">
+          <span>Members</span>
+          <h3>{members.length}</h3>
+        </div>
 
-                    <label>Paid By</label>
-                    <select
-                        value={paidBy}
-                        onChange={e => setPaidBy(e.target.value)}
-                        required
-                    >
-                        <option value="">Select member</option>
-                        {members.map(member => (
-                            <option key={member._id} value={member.name}>
-                                {member.name}
-                            </option>
-                        ))}
-                    </select>
+        <div className="summary-card">
+          <span>Share Per Person</span>
+          <h3>₹{share.toFixed(2)}</h3>
+        </div>
+      </div>
 
-                    <button type="submit" disabled={!members.length}>
-                        Add Expense
-                    </button>
+      <div className="card">
+        <form className="expense-form" onSubmit={addExpense}>
+          <div className="form-group">
+            <label htmlFor="expense-title">Expense Name</label>
+            <input
+              id="expense-title"
+              type="text"
+              placeholder="e.g. Hotel, Food, Fuel"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              maxLength={80}
+            />
+          </div>
 
-                    {!members.length && (
-                        <p className="hint">Add a member before adding expenses.</p>
-                    )}
-                </form>
-            </section>
+          <div className="form-group">
+            <label htmlFor="expense-amount">Amount (₹)</label>
+            <input
+              id="expense-amount"
+              type="number"
+              min="0.01"
+              step="0.01"
+              placeholder="Enter amount"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+            />
+          </div>
 
-            <section className="card">
-                <h3>Expense History</h3>
+          <div className="form-group">
+            <label htmlFor="expense-payer">Paid By</label>
+            <select
+              id="expense-payer"
+              value={paidBy}
+              onChange={(e) => setPaidBy(e.target.value)}
+            >
+              <option value="">Select member</option>
+              {members.map((member) => (
+                <option key={member.id} value={member.id}>
+                  {member.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-                {expenses.length === 0 && <p>No expenses added yet.</p>}
+          <button type="submit">Save Expense</button>
+        </form>
 
-                {expenses.map(expense => (
-                    <div className="expense-item" key={expense._id}>
-                        <div className="expense-icon">₹</div>
-                        <div className="expense-details">
-                            <strong>{expense.title}</strong>
-                            <p>Paid by {expense.paidBy}</p>
-                        </div>
-                        <strong className="amount">
-                            ₹{Number(expense.amount).toFixed(2)}
-                        </strong>
-                    </div>
-                ))}
-            </section>
-        </main>
-    );
+        {error && <p className="error">{error}</p>}
+      </div>
+    </section>
+  );
 }
 
 export default Expenses;
